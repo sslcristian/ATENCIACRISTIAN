@@ -12,6 +12,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import application.Main;
+import data.BookDataManager;
+import data.UserDataManager;
 
 public class MenuBookController {
 
@@ -39,7 +41,7 @@ public class MenuBookController {
     @FXML
     private Button btnMenup;
 
-    private List<Book> libros = new ArrayList<>();
+    private BookDataManager bookManager = BookDataManager.getInstance();
 
     @FXML
     void registerBook(ActionEvent event) {
@@ -69,15 +71,16 @@ public class MenuBookController {
             }
 
     
-            for (Book libro : libros) {
-                if (libro.getISBN() == ISBN) {
+            for (Book book : bookManager.getBooks()) {
+                if (book.getISBN() == ISBN) {
                     mostrarAlerta("Error", "ISBN repetido", "El ISBN ya está registrado.");
                     return;
                 }
             }
 
           
-            libros.add(new Book(titulo, autor, ISBN, año, disponible));
+          Book book = new Book(titulo, autor, ISBN, año, disponible);
+          bookManager.addBook(book);
             mostrarAlerta("Éxito", "Libro registrado", "El libro se ha registrado correctamente.");
             limpiarCampos();
         } catch (NumberFormatException e) {
@@ -88,9 +91,9 @@ public class MenuBookController {
     @FXML	
     void showAvailableBooks(ActionEvent event) {
         System.out.println("Libros no disponibles:");
-        for (Book libro : libros) {
-            if (!libro.isDisponible()) {
-                System.out.println(libro);
+        for (Book book : bookManager.getBooks()) {
+            if (!book.isDisponible()) {
+                System.out.println(book);
             }
         }
     }
