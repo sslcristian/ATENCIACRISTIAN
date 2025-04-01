@@ -8,12 +8,8 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import model.Book;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import application.Main;
 import data.BookDataManager;
-import data.UserDataManager;
 
 public class MenuBookController {
 
@@ -42,6 +38,7 @@ public class MenuBookController {
     private Button btnMenup;
 
     private BookDataManager bookManager = BookDataManager.getInstance();
+    
 
     @FXML
     void registerBook(ActionEvent event) {
@@ -118,4 +115,6 @@ public class MenuBookController {
         txtISBN.clear();
         chkAvailability.setSelected(false);
     }
-}
+    
+
+    }
