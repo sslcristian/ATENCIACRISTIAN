@@ -7,6 +7,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TextField;
+import model.Book;
 //import model.User;
 import model.User;
 
@@ -37,6 +38,13 @@ public class RegistroController {
         }
 
         // Crear un nuevo usuario y agregarlo a la lista de registrados
+        for (User user: userManager.getUsers()) {
+            if (user.getNombreUsuario().equals(nombreUsuario)) {
+                mostrarAlerta("Error", "Nombre de usuario repetido", "El nombre de usuario ya está registrado.");
+                return;
+            }
+        }
+        
         User nuevoUsuario = new User(nombreUsuario, contraseña);
         userManager.addUser(nuevoUsuario);
 

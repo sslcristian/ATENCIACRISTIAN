@@ -37,6 +37,11 @@ public class UserDataManager {
     }
     
     public void addUser(User user) {
-        userList.add(user);
+    	try {
+            userList.add(user);
+            dbManager.insertUser(user);
+        	 } catch (SQLException e) {
+                 e.printStackTrace();
+             }
     }
 }

@@ -2,6 +2,7 @@ package data;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -18,46 +19,6 @@ public class OracleDBConnection {
 	private final String service = "orcl";
 
 
-    // Method to get row count
-    public void getRowCount(String tableName) {
-        String sql = "SELECT COUNT(*) AS row_count FROM " + tableName;
-
-        try  (Connection connection = DriverManager.getConnection(getConnectionString(), username, password);
-             Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(sql)) {
-
-            if (resultSet.next()) {
-                int rowCount = resultSet.getInt("row_count");
-                System.out.println("Table '" + tableName + "' has " + rowCount + " rows.");
-            }
-
-        } catch (SQLException e) {
-            System.err.println("Error fetching row count: " + e.getMessage());
-        }
-    }
-
-    // Method to get column details
-    public void getColumnDetails(String tableName) {
-        String sql = "SELECT column_name, data_type, data_length "
-                   + "FROM user_tab_columns "
-                   + "WHERE table_name = '" + tableName + "'";
-
-        try  (Connection connection = DriverManager.getConnection(getConnectionString(), username, password);
-             Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(sql)) {
-
-            System.out.println("Column details for table '" + tableName + "':");
-            while (resultSet.next()) {
-                String columnName = resultSet.getString("column_name");
-                String dataType = resultSet.getString("data_type");
-                int dataLength = resultSet.getInt("data_length");
-                System.out.println("Column: " + columnName + ", Type: " + dataType + ", Length: " + dataLength);
-            }
-
-        } catch (SQLException e) {
-            System.err.println("Error fetching column details: " + e.getMessage());
-        }
-    }
     
     // Method to fetch books from the database
     public ArrayList<Book> fetchBooks() throws SQLException {
@@ -90,18 +51,14 @@ public class OracleDBConnection {
     // Method to fetch users from the database
     public ArrayList<User> fetchUsers() throws SQLException {
         ArrayList<User> users = new ArrayList<>();
-        String query = "SELECT nombreUsuario, contraseña FROM UserAdmin";
-   
-        
-
-        
+        String query = "SELECT nickname, password FROM UserAdmin";       
         try (Connection conn = DriverManager.getConnection(getConnectionString(), username, password);
              Statement stmt = conn.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
             
             while (rs.next()) {
-                String userName = rs.getString("nombreUsuario");
-                String password = rs.getString("contraseña");
+                String userName = rs.getString("nickname");
+                String password = rs.getString("password");
                 
                 User user = new User(userName, password);
                 users.add(user);
@@ -112,6 +69,51 @@ public class OracleDBConnection {
         }
 
         return users;
+    }
+    
+    // Method to insert a new book into the database
+    public void insertBook(Book book) throws SQLException {
+        String query = "INSERT INTO Book (Title, Author, ISBN, Year, Available) VALUES (?, ?, ?, ?, ?)";
+
+        try (Connection conn = DriverManager.getConnection(getConnectionString(), username, password);
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+        	
+
+            pstmt.setString(1, book.getTitulo());
+            pstmt.setString(2, book.getAutor());
+            pstmt.setLong(3, book.getISBN());
+            pstmt.setInt(4, book.getAño());
+            pstmt.setBoolean(5, book.isDisponible());
+
+            int rowsAffected = pstmt.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("Book inserted successfully.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new SQLException("Error inserting book into the database.");
+        }
+    }
+    
+    
+ // Method to insert a new user into the database
+    public void insertUser(User user) throws SQLException {
+        String query = "INSERT INTO UserAdmin (Nickname, Password) VALUES (?, ?)";
+
+        try (Connection conn = DriverManager.getConnection(getConnectionString(), username, password);
+             PreparedStatement pstmt = conn.prepareStatement(query)) {
+            
+            pstmt.setString(1, user.getNombreUsuario());
+            pstmt.setString(2, user.getContraseña());
+
+            int rowsAffected = pstmt.executeUpdate();
+            if (rowsAffected > 0) {
+                System.out.println("User inserted successfully.");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new SQLException("Error inserting user into the database.");
+        }
     }
     
 	public String getConnectionString() {
