@@ -87,12 +87,7 @@ public class MenuBookController {
 
     @FXML	
     void showAvailableBooks(ActionEvent event) {
-        System.out.println("Libros disponibles:");
-        for (Book book : bookManager.getBooks()) {
-            if (book.isDisponible()) {
-                System.out.println(book);
-            }
-        }
+    	Main.loadScene("/view/LibraryBook.fxml");
     }
 
     @FXML

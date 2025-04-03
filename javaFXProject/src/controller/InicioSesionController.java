@@ -53,7 +53,7 @@ public class InicioSesionController {
         }
 
         if (credencialesValidas) {
-            Main.loadScene("/view/MenuBook.fxml");
+            Main.loadScene("/view/Registrar.fxml");
         } else {
             mostrarAlerta("Error", "Credenciales incorrectas", "El nombre de usuario o la contraseña son incorrectos.");
         }
