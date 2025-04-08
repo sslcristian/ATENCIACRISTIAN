@@ -8,8 +8,12 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.TextField;
 import model.Book;
 
+import java.sql.Connection;
+
 import application.Main;
-import data.BookDataManager;
+import data.BookDAO;
+
+import data.DB_connection;
 
 public class MenuBookController {
 
@@ -37,9 +41,9 @@ public class MenuBookController {
     @FXML
     private Button btnMenup;
 
-    private BookDataManager bookManager = BookDataManager.getInstance();
-    
-
+    //private BookDataManager bookManager = BookDataManager.getInstance();
+    private Connection dbConnection = DB_connection.getInstance().getConnection();
+     private BookDAO bookDAO = new BookDAO(dbConnection);
     @FXML
     void registerBook(ActionEvent event) {
         String titulo = txtTitle.getText().trim();
@@ -68,7 +72,7 @@ public class MenuBookController {
             }
 
     
-            for (Book book : bookManager.getBooks()) {
+            for (Book book : bookDAO.fetch()) {
                 if (book.getISBN() == ISBN) {
                     mostrarAlerta("Error", "ISBN repetido", "El ISBN ya está registrado.");
                     return;
@@ -77,7 +81,7 @@ public class MenuBookController {
 
           
           Book book = new Book(titulo, autor, ISBN, año, disponible);
-          bookManager.addBook(book);
+          bookDAO.save(book);
             mostrarAlerta("Éxito", "Libro registrado", "El libro se ha registrado correctamente.");
             limpiarCampos();
         } catch (NumberFormatException e) {

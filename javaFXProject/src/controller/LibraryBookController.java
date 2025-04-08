@@ -1,6 +1,9 @@
 package controller;
+import java.sql.Connection;
+
 import application.Main;
-import data.BookDataManager;
+import data.BookDAO;
+import data.DB_connection;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -18,6 +21,8 @@ public class LibraryBookController {
     
     @FXML
     private Button Back;
+    @FXML
+    private Button btborrar;
 
     @FXML
     private Button btnMenuP;
@@ -32,13 +37,14 @@ public class LibraryBookController {
 	
 	@FXML
 	private TableColumn<Book, Integer> year;
-	private BookDataManager bookManager = BookDataManager.getInstance();
+    private Connection dbConnection = DB_connection.getInstance().getConnection();
+    private BookDAO bookDAO = new BookDAO(dbConnection);
 	@FXML
 	
 	public void initialize() {
 		ObservableList<Book> books = FXCollections.observableArrayList();
 		
-		for(Book book:bookManager.getBooks()){ 
+		for(Book book:bookDAO.fetch()){ 
 			if(book.isDisponible()) { 
 			books.add(book);
 			}
@@ -61,6 +67,12 @@ public class LibraryBookController {
     @FXML
     void goToMainMenu(ActionEvent event) {
     	Main.loadScene("/view/MenuPrincipal.fxml");
+    }
+    @FXML
+    void borrarLibro(ActionEvent event) {
+    	Book book = Table.getSelectionModel().getSelectedItem();
+    	bookDAO.delete(book.getISBN());
+    	initialize();
     }
     
 }
