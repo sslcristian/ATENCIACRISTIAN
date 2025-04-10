@@ -72,11 +72,11 @@ public class MenuBookController {
             }
 
     
-            for (Book book : bookDAO.fetch()) {
-                if (book.getISBN() == ISBN) {
-                    mostrarAlerta("Error", "ISBN repetido", "El ISBN ya está registrado.");
-                    return;
-                }
+       
+            
+            if(bookDAO.authenticate(ISBN)){
+                mostrarAlerta("Error", "ISBN repetido", "El ISBN ya está registrado.");
+                return;
             }
 
           

@@ -11,6 +11,8 @@ public interface CRUD_Operation<S,T> {
 		void update(S entity);
 		// D: Delete
 		void delete(T id);
+		
+		boolean authenticate(T id);
 }
 
 
